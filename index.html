@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Assistant</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            padding: 8px 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        li:hover {
+            background-color: #e9e9e9;
+        }
+
+        /* Media query for responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Assistant</h1>
+        <input type="text" id="sentenceInput" placeholder="Type a sentence...">
+        <ul id="suggestionsList"></ul>
+    </div>
+
+    <script>
+        const inputField = document.getElementById('sentenceInput');
+        const suggestionsList = document.getElementById('suggestionsList');
+
+        inputField.addEventListener('input', () => {
+            const inputValue = inputField.value.toLowerCase().trim();
+            if (inputValue.length === 0) {
+                suggestionsList.innerHTML = ''; // Clear suggestions if input is empty
+                return;
+            }
+
+            fetch(`/suggest?sentence=${inputValue}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsList.innerHTML = ''; // Clear previous suggestions
+                    data.forEach(suggestion => {
+                        const li = document.createElement('li');
+                        li.textContent = suggestion;
+                        suggestionsList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching suggestions:', error));
+        });
+    </script>
+</body>
+</html>
